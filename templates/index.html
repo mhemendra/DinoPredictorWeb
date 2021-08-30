@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+  <meta charset="UTF-8">
+  <title>Dino Name Generator</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+ <div class="login">
+	<h1>Dinosaur Names</h1>
+     <h3> Enter a name with which you want to generate possible dinosaur names</h3>
+
+     <!-- Main Input For Receiving Query to our ML -->
+    <form action="{{ url_for('generate_dino_name')}}"method="post">
+    	<input type="text" name="start_string" placeholder="Name" required="required" />
+        <button type="submit" class="btn">Generate</button>
+    </form>
+
+   <br>
+   <br>
+  <!-- to iterate over the list of dino names and print all-->
+     {% for output in predicted_name %}
+      <p>{{ output }} </p>
+  {% endfor %}
+ </div>
+
+
+</body>
+</html>
