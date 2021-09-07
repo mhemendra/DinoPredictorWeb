@@ -2,3 +2,4 @@ Flask==2.0.1
 gunicorn
 numpy
 tensorflow
+mysql-connector-python-rf
