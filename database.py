@@ -36,12 +36,15 @@ def select_data(conn):
     cursor = conn.cursor()
     cursor.execute("select * from dino_names")
     out = cursor.fetchall()
+    print(len(out)/3)
     for row in out:
         print(row)
+    print("Total Generated Names:",int(len(out)/3))
 
 def delete_data(conn):
     cursor = conn.cursor()
     cursor.execute("delete from dino_names")
+    conn.commit()
 
 if __name__ == '__main__':
     conn = get_conn()
