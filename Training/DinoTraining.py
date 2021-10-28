@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
 import mlflow
+import os
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'C:\Users\mheme\dino-name-generator-b95c587f2fc6.json'
 
 def read_data():
     names= open(r'D:\Downloads\dinos.txt','r').read().lower()
@@ -44,10 +46,12 @@ cloudUri = 'gs://dino-name-generator-mlflow-artifacts'
 if mlflow.get_experiment_by_name('dino-name-generator') is None:
     mlflow.create_experiment('dino-name-generator', artifact_location=cloudUri)
 mlflow.set_experiment('dino-name-generator')
+mlflow.tensorflow.autolog(every_n_iter=2)
 
-model = tf.keras.models.Sequential([
-    tf.keras.layers.LSTM(128, activation='relu'),
-    tf.keras.layers.Dense(total_chars, activation='softmax')
-])
-model.compile(optimizer='adam', metrics=['accuracy'], loss='categorical_crossentropy')
-model.fit(xs,ys,epochs=10)
+with mlflow.start_run():
+    model = tf.keras.models.Sequential([
+        tf.keras.layers.LSTM(128, activation='relu'),
+        tf.keras.layers.Dense(total_chars, activation='softmax')
+    ])
+    model.compile(optimizer='adam', metrics=['accuracy'], loss='categorical_crossentropy')
+    model.fit(xs,ys,epochs=10)
