@@ -2,16 +2,18 @@ import numpy as np
 import tensorflow as tf
 import mlflow
 import os
+
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'C:\Users\mheme\dino-name-generator-b95c587f2fc6.json'
 
 def read_data():
-    names= open(r'D:\Downloads\dinos.txt','r').read().lower()
+    with open(r'D:\Downloads\dinos.txt','r') as names:
+        names = names.read().lower()
+        names_array = names.split('\n')
+        name_char_array = []
+        for single_name in names_array:
+            single_name_chars = [c for c in single_name]
+            name_char_array.append(single_name_chars)
     chars = list(set(names))
-    names_array = names.split('\n')
-    name_char_array = []
-    for single_name in names_array:
-        single_name_chars = [c for c in single_name]
-        name_char_array.append(single_name_chars)
     chars.append('#')
     chars = sorted(chars)
     return chars,name_char_array
@@ -46,12 +48,17 @@ cloudUri = 'gs://dino-name-generator-mlflow-artifacts'
 if mlflow.get_experiment_by_name('dino-name-generator') is None:
     mlflow.create_experiment('dino-name-generator', artifact_location=cloudUri)
 mlflow.set_experiment('dino-name-generator')
-mlflow.tensorflow.autolog(every_n_iter=2)
+mlflow.tensorflow.autolog(every_n_iter=20)
 
 with mlflow.start_run():
     model = tf.keras.models.Sequential([
-        tf.keras.layers.LSTM(128, activation='relu'),
+        tf.keras.layers.LSTM(128, activation='relu',return_sequences=True),
+        tf.keras.layers.LSTM(64, activation='relu'),
         tf.keras.layers.Dense(total_chars, activation='softmax')
     ])
     model.compile(optimizer='adam', metrics=['accuracy'], loss='categorical_crossentropy')
-    model.fit(xs,ys,epochs=10)
+    model.fit(xs,ys,epochs=40)
+
+mlflow.log_param("char_num_mapping",ix_to_char)
+
+print(mlflow.get_tracking_uri())
