@@ -57,8 +57,7 @@ with mlflow.start_run():
         tf.keras.layers.Dense(total_chars, activation='softmax')
     ])
     model.compile(optimizer='adam', metrics=['accuracy'], loss='categorical_crossentropy')
-    model.fit(xs,ys,epochs=40)
+    model.fit(xs,ys,epochs=140)
 
-mlflow.log_param("char_num_mapping",ix_to_char)
+#mlflow.log_param("char_num_mapping",ix_to_char)
 
-print(mlflow.get_tracking_uri())
