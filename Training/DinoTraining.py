@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import mlflow
 import os
+import sqlite3
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'C:\Users\mheme\dino-name-generator-b95c587f2fc6.json'
 
@@ -44,11 +45,15 @@ xs, ys = get_data(name_char_array, sequence_length)
 #train_y = np.array(train_y).reshape(-1,1,1)
 
 cloudUri = 'gs://dino-name-generator-mlflow-artifacts'
+uri = 'file:///C:/Users/mheme/PycharmProjects/dino-name-generator/Training/mlruns'
+#uri = 'sqlite:///C:/Users/mheme/PycharmProjects/dino-name-generator/mlflow.db'
+mlflow.set_tracking_uri(uri)
 
-if mlflow.get_experiment_by_name('dino-name-generator') is None:
-    mlflow.create_experiment('dino-name-generator', artifact_location=cloudUri)
-mlflow.set_experiment('dino-name-generator')
-mlflow.tensorflow.autolog(every_n_iter=20)
+if mlflow.get_experiment_by_name('dino-name-gen') is None:
+    mlflow.create_experiment('dino-name-gen', artifact_location=cloudUri)
+
+mlflow.set_experiment('dino-name-gen')
+mlflow.tensorflow.autolog()
 
 with mlflow.start_run():
     model = tf.keras.models.Sequential([
@@ -57,7 +62,10 @@ with mlflow.start_run():
         tf.keras.layers.Dense(total_chars, activation='softmax')
     ])
     model.compile(optimizer='adam', metrics=['accuracy'], loss='categorical_crossentropy')
-    model.fit(xs,ys,epochs=140)
+    model.fit(xs,ys,epochs=2)
 
-#mlflow.log_param("char_num_mapping",ix_to_char)
 
+#mlflow.log_param("char_num_mapping","ix_to_char")
+dict = {}
+dict[None] = 'x'*300
+mlflow.log_param(None, "123")
